@@ -85,7 +85,7 @@ export default function ProfitLoss() {
   const formatDate = (d: Date) => d.toISOString().split("T")[0];
   const defaultEnd = formatDate(today);
   const prevMonth = new Date(today);
-  prevMonth.setMonth(prevMonth.getMonth() - 1);
+  prevMonth.setMonth(prevMonth.getMonth() - 6);
   const defaultStart = formatDate(prevMonth);
   const [startDate, setStartDate] = useState(defaultStart);
   const [endDate, setEndDate] = useState(defaultEnd);
