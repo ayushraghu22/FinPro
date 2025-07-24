@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useEffect, useRef, ReactNode } fro
 import translations from '@/data/translations.json';
 import financialTips from '@/data/financial-tips.json';
 
-// Types - Only English
 type Language = 'en';
 type ChatState = 'idle' | 'thinking' | 'typing' | 'error';
 type MessageType = 'text' | 'action' | 'data';
@@ -22,13 +21,10 @@ interface Suggestion {
 }
 
 interface ChatContextType {
-  // Language
   language: Language;
   setLanguage: (lang: Language) => void;
   languages: Array<{ code: string; name: string; nativeName: string }>;
   t: (key: string) => string;
-  
-  // Chat
   messages: Message[];
   chatState: ChatState;
   suggestions: Suggestion[];
@@ -36,26 +32,20 @@ interface ChatContextType {
   sendMessage: (message: string) => void;
   clearChat: () => void;
   addMessage: (message: string, sender: 'user' | 'assistant', type: MessageType, data?: any) => void;
-  
-  // Business Data (for quick actions)
   businessData: {
     expenses: any[];
     inventory: any[];
     sales: any[];
     profit: any;
   };
-  
-  // Utilities
   isMobile: boolean;
 }
 
-// Language definitions - Only English
 const LANGUAGES = [
   { code: 'en', name: 'English', nativeName: 'English' }
 ];
 
-// Financial Literacy Course - 10 Essential Tips
-const FINANCIAL_LITERACY_TIPS: Suggestion[] = [
+const FIN_TIPS: Suggestion[] = [
   { text: "What is Budget?", action: "tip-budget" },
   { text: "Track Your Money", action: "tip-tracking" },
   { text: "Profit vs Revenue", action: "tip-profit" },
@@ -68,8 +58,7 @@ const FINANCIAL_LITERACY_TIPS: Suggestion[] = [
   { text: "Tax Planning", action: "tip-tax" }
 ];
 
-// Default suggestions - Read-only actions
-const DEFAULT_SUGGESTIONS: Suggestion[] = [
+const DEF_SUGS: Suggestion[] = [
   { text: "Show Expenses", action: "show-expenses" },
   { text: "Profit Analysis", action: "show-profit" },
   { text: "Check Inventory", action: "show-inventory" },
@@ -78,8 +67,7 @@ const DEFAULT_SUGGESTIONS: Suggestion[] = [
   { text: "Help", action: "show-help" }
 ];
 
-// Mock business data - matching dashboard data
-const MOCK_BUSINESS_DATA = {
+const BIZ_DATA = {
   expenses: [
     { id: 1, amount: 25000, category: 'Rent', date: '2024-01-15', description: 'Rent Payment' },
     { id: 2, amount: 850, category: 'Utilities', date: '2024-01-14', description: 'Electricity Bill' },
@@ -106,34 +94,26 @@ const MOCK_BUSINESS_DATA = {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
-  // Financial Literacy Tips Content - Load from JSON
-  const getFinancialTip = (topic: string) => {
-    console.log('getFinancialTip called with topic:', topic);
-    
-    // Find topic with case-insensitive match
-    const topicKey = Object.keys(financialTips).find(key => 
-      key.toLowerCase() === topic.toLowerCase()
+  const getTip = (topic: string) => {
+    const key = Object.keys(financialTips).find(k => 
+      k.toLowerCase() === topic.toLowerCase()
     );
     
-    const content = topicKey ? financialTips[topicKey as keyof typeof financialTips] : null;
-    console.log('Topic lookup result:', content ? 'Found' : 'Not found');
-    console.log('Matched key:', topicKey);
+    const cont = key ? financialTips[key as keyof typeof financialTips] : null;
     
     return {
-      message: content || `Topic "${topic}" not found. Available topics: ${Object.keys(financialTips).join(', ')}`,
+      message: cont || `Topic "${topic}" not found. Available topics: ${Object.keys(financialTips).join(', ')}`,
       type: 'text' as MessageType
     };
   };
 
-  // Language state
-  const [language, setLanguageState] = useState<Language>(() => {
-    // Version check to clear old cached data when language mapping changes
-    const LANGUAGE_VERSION = 'v4.0'; // English only version
-    const currentVersion = localStorage.getItem('languageVersion');
+  const [lang, setLangState] = useState<Language>(() => {
+    const VER = 'v4.0';
+    const curVer = localStorage.getItem('languageVersion');
     
-    if (currentVersion !== LANGUAGE_VERSION) {
+    if (curVer !== VER) {
       localStorage.removeItem('preferredLanguage');
-      localStorage.setItem('languageVersion', LANGUAGE_VERSION);
+      localStorage.setItem('languageVersion', VER);
       return 'en';
     }
     
@@ -141,181 +121,148 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     return (saved as Language) || 'en';
   });
 
-  // Chat state
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatState, setChatState] = useState<ChatState>('idle');
-  const [suggestions] = useState<Suggestion[]>(DEFAULT_SUGGESTIONS);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [msgs, setMsgs] = useState<Message[]>([]);
+  const [state, setState] = useState<ChatState>('idle');
+  const [sugs] = useState<Suggestion[]>(DEF_SUGS);
+  const msgEndRef = useRef<HTMLDivElement>(null);
 
-  // Business data state
-  const [businessData] = useState(MOCK_BUSINESS_DATA);
+  const [bizData] = useState(BIZ_DATA);
 
-  // Mobile detection
-  const [isMobile, setIsMobile] = useState(false);
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Language functions
-  const setLanguage = (lang: Language) => {
-    console.log('🌍 Language Selection Debug:');
-    console.log('Button clicked for language:', lang);
-    console.log('Language object:', LANGUAGES.find(l => l.code === lang));
-    
-    // Force immediate state update
-    setLanguageState(lang);
-    localStorage.setItem('preferredLanguage', lang);
-    document.documentElement.lang = lang;
-    
-    // Force re-render to ensure state is updated
-    setTimeout(() => {
-      console.log('🔄 After state update, current language:', lang);
-    }, 0);
+  const setLanguage = (l: Language) => {
+    setLangState(l);
+    localStorage.setItem('preferredLanguage', l);
+    document.documentElement.lang = l;
   };
 
   const t = (key: string): string => {
-    const langTranslations = translations[language as keyof typeof translations];
-    const result = langTranslations?.[key as keyof typeof langTranslations] || 
+    const trans = translations[lang as keyof typeof translations];
+    const res = trans?.[key as keyof typeof trans] || 
            translations.en[key as keyof typeof translations.en] || 
            key;
     
-    // Debug logging for welcome message
-    if (key === 'welcomeMessage') {
-      console.log('🔍 Translation Debug:');
-      console.log('Selected language:', language);
-      console.log('Available translations:', Object.keys(translations));
-      console.log('Result for welcomeMessage:', result);
-      console.log('Expected Telugu text should start with: నమస్తే');
-    }
-    
-    return result;
+    return res;
   };
 
-  // Chat functions
-  const addMessage = (message: string, sender: 'user' | 'assistant', type: MessageType = 'text', data?: any) => {
-    const newMessage: Message = {
+  const addMsg = (msg: string, sender: 'user' | 'assistant', type: MessageType = 'text', data?: any) => {
+    const newMsg: Message = {
       id: Date.now().toString(),
-      message,
+      message: msg,
       sender,
       type,
       timestamp: Date.now(),
       data
     };
-    setMessages(prev => [...prev, newMessage]);
+    setMsgs(prev => [...prev, newMsg]);
   };
 
-  const clearChat = () => {
-    setMessages([]);
-    setChatState('idle');
+  const clear = () => {
+    setMsgs([]);
+    setState('idle');
   };
 
-  const sendMessage = async (message: string) => {
-    // Add user message
-    addMessage(message, 'user');
-    setChatState('thinking');
+  const send = async (txt: string) => {
+    addMsg(txt, 'user');
+    setState('thinking');
 
-    // Simulate processing delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Process message and generate response
-    const response = processMessage(message.toLowerCase());
+    const resp = processMsg(txt.toLowerCase());
     
-    setChatState('typing');
+    setState('typing');
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Add assistant response
-    addMessage(response.message, 'assistant', response.type, response.data);
-    setChatState('idle');
+    addMsg(resp.message, 'assistant', resp.type, resp.data);
+    setState('idle');
   };
 
-  const processMessage = (message: string) => {
-    // Handle course topic selection FIRST (more specific)
-    if (message.startsWith('learn ')) {
-      const topic = message.replace('learn ', '');
-      console.log('Debug - Topic received:', topic);
-      return getFinancialTip(topic);
+  const processMsg = (txt: string) => {
+    if (txt.startsWith('learn ')) {
+      const topic = txt.replace('learn ', '');
+      return getTip(topic);
     }
 
-    // Financial Literacy Course Navigation
-    if (message.includes('course') || message.includes('learn')) {
+    if (txt.includes('course') || txt.includes('learn')) {
       return {
         message: `Choose a topic to learn:`,
         type: 'navigation' as MessageType,
         data: { 
           type: 'course',
-          options: FINANCIAL_LITERACY_TIPS.map(tip => tip.text),
+          options: FIN_TIPS.map(tip => tip.text),
           category: 'learn'
         }
       };
     }
 
-    // Quick action responses with business data
-    if (message.includes('expense') && message.includes('show')) {
-      const totalExpenses = businessData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    if (txt.includes('expense') && txt.includes('show')) {
+      const total = bizData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
       
       return {
-        message: `${businessData.expenses.map(exp => {
+        message: `${bizData.expenses.map(exp => {
           const desc = exp.description;
-          const amount = `₹${exp.amount.toLocaleString()}`;
-          return `${desc.padEnd(20)} ${amount.padStart(8)}`;
+          const amt = `₹${exp.amount.toLocaleString()}`;
+          return `${desc.padEnd(20)} ${amt.padStart(8)}`;
         }).join('\n')}
 ${''.padEnd(20)} ${'--------'.padStart(8)}
-${'Total'.padEnd(20)} ${'₹' + totalExpenses.toLocaleString().padStart(7)}`,
+${'Total'.padEnd(20)} ${'₹' + total.toLocaleString().padStart(7)}`,
         type: 'data' as MessageType,
-        data: businessData.expenses
+        data: bizData.expenses
       };
     }
 
-    if (message.includes('profit') || message.includes('analysis')) {
+    if (txt.includes('profit') || txt.includes('analysis')) {
       return {
-        message: `Revenue: ₹${businessData.profit.revenue.toLocaleString()}
-Expenses: ₹${businessData.profit.expenses.toLocaleString()}
-Net Profit: ₹${businessData.profit.netProfit.toLocaleString()}
-Profit Margin: ${businessData.profit.profitMargin}%`,
+        message: `Revenue: ₹${bizData.profit.revenue.toLocaleString()}
+Expenses: ₹${bizData.profit.expenses.toLocaleString()}
+Net Profit: ₹${bizData.profit.netProfit.toLocaleString()}
+Profit Margin: ${bizData.profit.profitMargin}%`,
         type: 'data' as MessageType,
-        data: businessData.profit
+        data: bizData.profit
       };
     }
 
-    if (message.includes('inventory') || message.includes('stock')) {
-      const lowStock = businessData.inventory.filter(item => item.stock <= item.minStock);
+    if (txt.includes('inventory') || txt.includes('stock')) {
+      const low = bizData.inventory.filter(item => item.stock <= item.minStock);
       return {
-        message: `${businessData.inventory.map(item => 
+        message: `${bizData.inventory.map(item => 
   `${item.name}: ${item.stock} units (Min: ${item.minStock})
 Value: ₹${item.value.toLocaleString()} | ${item.stock <= item.minStock ? 'LOW STOCK' : 'Good'}`
-).join('\n\n')}${lowStock.length > 0 ? `\n\n${lowStock.length} items low on stock` : ''}`,
+).join('\n\n')}${low.length > 0 ? `\n\n${low.length} items low on stock` : ''}`,
         type: 'data' as MessageType,
-        data: businessData.inventory
+        data: bizData.inventory
       };
     }
 
-    if (message.includes('sales') || message.includes('revenue')) {
-      const totalSales = businessData.sales.reduce((sum, sale) => sum + sale.amount, 0);
+    if (txt.includes('sales') || txt.includes('revenue')) {
+      const totalSales = bizData.sales.reduce((sum, sale) => sum + sale.amount, 0);
       return {
-        message: `${businessData.sales.map(sale => 
+        message: `${bizData.sales.map(sale => 
   `${sale.customer} - ₹${sale.amount.toLocaleString()}
 ${sale.date} | ${sale.product}`
 ).join('\n\n')}
 
 Total: ₹${totalSales.toLocaleString()}`,
         type: 'data' as MessageType,
-        data: businessData.sales
+        data: bizData.sales
       };
     }
 
-    if (message.includes('help')) {
+    if (txt.includes('help')) {
       return {
         message: t('help'),
         type: 'text' as MessageType
       };
     }
 
-    // Default responses based on language
-    const responses = {
+    const resp = {
       'expenses': t('expenses'),
       'profit': t('profitLoss'),
       'inventory': t('inventory'),
@@ -328,8 +275,8 @@ Total: ₹${totalSales.toLocaleString()}`,
       'namaste': t('greeting')
     };
 
-    for (const [keyword, response] of Object.entries(responses)) {
-      if (message.includes(keyword)) {
+    for (const [keyword, response] of Object.entries(resp)) {
+      if (txt.includes(keyword)) {
         return {
           message: response,
           type: 'text' as MessageType
@@ -343,31 +290,27 @@ Total: ₹${totalSales.toLocaleString()}`,
     };
   };
 
-  const contextValue: ChatContextType = {
-    // Language
-    language,
+  const ctx: ChatContextType = {
+    language: lang,
     setLanguage,
     languages: LANGUAGES,
     t,
     
-    // Chat
-    messages,
-    chatState,
-    suggestions,
-    messagesEndRef,
-    sendMessage,
-    clearChat,
-    addMessage,
+    messages: msgs,
+    chatState: state,
+    suggestions: sugs,
+    messagesEndRef: msgEndRef,
+    sendMessage: send,
+    clearChat: clear,
+    addMessage: addMsg,
     
-    // Business Data
-    businessData,
+    businessData: bizData,
     
-    // Utilities
-    isMobile
+    isMobile: mobile
   };
 
   return (
-    <ChatContext.Provider value={contextValue}>
+    <ChatContext.Provider value={ctx}>
       {children}
     </ChatContext.Provider>
   );
@@ -376,7 +319,7 @@ Total: ₹${totalSales.toLocaleString()}`,
 export const useChatContext = () => {
   const context = useContext(ChatContext);
   if (!context) {
-    throw new Error('useChatContext must be used within a ChatProvider');
+    throw new Error('useChatContext needs ChatProvider');
   }
   return context;
 };

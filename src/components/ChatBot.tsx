@@ -1,44 +1,41 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Bot, MessageCircle, X, Minimize2, Maximize2, Send, Mic, Globe } from 'lucide-react';
 import { useChatContext } from '@/contexts/ChatContext';
 
-// Message Component
 const ChatMessage = ({ message, showTimestamp = false, onSendMessage }: any) => {
-  const isUser = message.sender === 'user';
+  const usr = message.sender === 'user';
   
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const fmtDt = (dateStr: string) => {
+    const dt = new Date(dateStr);
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
   
   return (
-    <div className={cn("flex gap-3 py-3 px-4", isUser && "flex-row-reverse")}>
+    <div className={cn("flex gap-3 py-3 px-4", usr && "flex-row-reverse")}>
       <div className={cn(
         "flex items-center justify-center h-8 w-8 rounded-full shrink-0",
-        isUser ? "bg-primary text-primary-foreground" : "bg-muted"
+        usr ? "bg-primary text-primary-foreground" : "bg-muted"
       )}>
-        {isUser ? "U" : <Bot className="h-4 w-4" />}
+        {usr ? "U" : <Bot className="h-4 w-4" />}
       </div>
-      <div className={cn("flex flex-col gap-1 max-w-[80%]", isUser && "items-end")}>
+      <div className={cn("flex flex-col gap-1 max-w-[80%]", usr && "items-end")}>
         <div className={cn(
           "rounded-lg px-3 py-2 text-sm",
-          isUser 
-            ? "bg-primary text-primary-foreground ml-auto" 
-            : "bg-muted",
+          usr ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
           message.type === 'data' && "font-mono whitespace-pre overflow-x-auto"
         )}>
           {message.message}
         </div>
         
-        {/* Navigation buttons */}
         {message.type === 'navigation' && message.data && (
           <div className="flex flex-wrap gap-2 mt-2">
-            {message.data.options.map((option: string, index: number) => (
+            {message.data.options.map((option: string, idx: number) => (
               <button
-                key={index}
+                key={idx}
                 className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-md border border-blue-300 transition-colors"
                 onClick={() => {
                   if (message.data.category === 'learn') {
@@ -65,21 +62,20 @@ const ChatMessage = ({ message, showTimestamp = false, onSendMessage }: any) => 
   );
 };
 
-// Chat Input Component
 const ChatInput = ({ onSendMessage, chatState, disabled }: any) => {
-  const [message, setMessage] = useState('');
-  const [isListening, setIsListening] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [listening, setListening] = useState(false);
   const { t } = useChatContext();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && !disabled) {
-      onSendMessage(message.trim());
-      setMessage('');
+    if (msg.trim() && !disabled) {
+      onSendMessage(msg.trim());
+      setMsg('');
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const keyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
@@ -92,9 +88,9 @@ const ChatInput = ({ onSendMessage, chatState, disabled }: any) => {
         <div className="flex-1 relative">
           <input
             type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
+            onKeyPress={keyPress}
             placeholder={t('inputPlaceholder')}
             disabled={disabled}
             className="w-full px-3 py-2 border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50"
@@ -104,8 +100,8 @@ const ChatInput = ({ onSendMessage, chatState, disabled }: any) => {
           type="button"
           size="icon"
           variant="outline"
-          className={cn("shrink-0", isListening && "bg-primary text-primary-foreground")}
-          onClick={() => setIsListening(!isListening)}
+          className={cn("shrink-0", listening && "bg-primary text-primary-foreground")}
+          onClick={() => setListening(!listening)}
           disabled={disabled}
         >
           <Mic className="h-4 w-4" />
@@ -113,35 +109,34 @@ const ChatInput = ({ onSendMessage, chatState, disabled }: any) => {
         <Button
           type="submit"
           size="icon"
-          disabled={!message.trim() || disabled}
+          disabled={!msg.trim() || disabled}
         >
           <Send className="h-4 w-4" />
         </Button>
       </form>
       <p className="text-xs text-muted-foreground mt-1 text-center">
-        {t('pressEnter')}{!isListening && t('micForVoice')}
+        {t('pressEnter')}{!listening && t('micForVoice')}
       </p>
     </div>
   );
 };
 
-// Chat Suggestions Component
 const ChatSuggestions = ({ suggestions, onSuggestionClick, disabled }: any) => {
   if (!suggestions || suggestions.length === 0) return null;
 
   return (
     <div className="p-4 border-t bg-muted/30">
       <div className="flex flex-wrap gap-2">
-        {suggestions.map((suggestion: any, index: number) => (
+        {suggestions.map((sug: any, idx: number) => (
           <Button
-            key={index}
+            key={idx}
             variant="outline"
             size="sm"
-            onClick={() => onSuggestionClick(suggestion.action)}
+            onClick={() => onSuggestionClick(sug.action)}
             disabled={disabled}
             className="text-xs hover:bg-primary hover:text-primary-foreground"
           >
-            {suggestion.text}
+            {sug.text}
           </Button>
         ))}
       </div>
@@ -149,26 +144,20 @@ const ChatSuggestions = ({ suggestions, onSuggestionClick, disabled }: any) => {
   );
 };
 
-// Language Selection Component
 const LanguageSelection = ({ onLanguageSelect }: any) => {
-  const { language: currentLanguage, setLanguage, languages, t, addMessage } = useChatContext();
+  const { language: curLang, setLanguage, languages, t, addMessage } = useChatContext();
 
-  const handleLanguageSelect = (langCode: string) => {
-    console.log('🔄 Language button clicked:', langCode);
-    setLanguage(langCode);
+  const handleLangSelect = (code: string) => {
+    setLanguage(code);
     
-    // Direct translation mapping to avoid React state issues
-    const directTranslations = {
+    const trans = {
       en: "Hey! What do you need?",
       hi: "हैलो! क्या चाहिए?"
     };
     
-    const welcomeMsg = directTranslations[langCode as keyof typeof directTranslations] || directTranslations.en;
+    const msg = trans[code as keyof typeof trans] || trans.en;
     
-    console.log('📄 Direct translation result:', welcomeMsg);
-    
-    // Call parent handler with direct message
-    onLanguageSelect(langCode, welcomeMsg);
+    onLanguageSelect(code, msg);
   };
 
   return (
@@ -180,11 +169,11 @@ const LanguageSelection = ({ onLanguageSelect }: any) => {
         {languages.map((lang: any) => (
           <button
             key={lang.code}
-            onClick={() => handleLanguageSelect(lang.code)}
+            onClick={() => handleLangSelect(lang.code)}
             className={cn(
               "px-4 py-3 rounded-lg text-sm font-medium transition-all",
               "hover:bg-primary/10 hover:shadow-sm border border-border",
-              currentLanguage === lang.code 
+              curLang === lang.code 
                 ? "bg-primary text-primary-foreground shadow-sm" 
                 : "bg-background"
             )}
@@ -200,37 +189,37 @@ const LanguageSelection = ({ onLanguageSelect }: any) => {
   );
 };
 
-// Main ChatBot Component
 export const ChatBot = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [showLanguageSelection, setShowLanguageSelection] = useState(true);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const [open, setOpen] = useState(false);
+  const [minimized, setMinimized] = useState(false);
+  const [showLangSelect, setShowLangSelect] = useState(true);
+  const msgEndRef = useRef<HTMLDivElement>(null);
+
+  const authPaths = ['/dashboard', '/finances', '/profit-loss', '/loans', '/rents', '/bills', '/upload-invoice', '/sales', '/reports'];
+  const isAuth = authPaths.some(path => location.pathname.startsWith(path));
   
   const {
     messages,
-    chatState,
-    suggestions,
-    sendMessage,
-    clearChat,
+    chatState: state,
+    suggestions: sugs,
+    sendMessage: send,
+    clearChat: clear,
     addMessage,
     t,
-    isMobile
+    isMobile: mobile
   } = useChatContext();
 
-  // Add welcome message after language selection
-  const handleLanguageSelect = (langCode: string, welcomeMsg: string) => {
-    console.log('🎯 Received language selection:', langCode, 'Message:', welcomeMsg);
-    setShowLanguageSelection(false);
+  const handleLangSelect = (code: string, msg: string) => {
+    setShowLangSelect(false);
     
-    // Force immediate context language update and wait for it
     setTimeout(() => {
-      addMessage(welcomeMsg, 'assistant', 'text');
-    }, 100); // Reduced timeout since we have direct message
+      addMessage(msg, 'assistant', 'text');
+    }, 100);
   };
 
-  const handleSuggestionClick = (action: string) => {
-    const actionMessages: Record<string, string> = {
+  const handleSugClick = (action: string) => {
+    const actMsgs: Record<string, string> = {
       'show-expenses': 'Show me my recent expenses',
       'show-profit': 'Show me the profit analysis',
       'show-inventory': 'Check my inventory status',
@@ -239,91 +228,86 @@ export const ChatBot = () => {
       'show-help': 'What can you help me with?'
     };
 
-    const message = actionMessages[action] || `Help me with ${action}`;
-    sendMessage(message);
+    const txt = actMsgs[action] || `Help me with ${action}`;
+    send(txt);
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    msgEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Chat Button (when closed)
-  if (!isOpen) {
+  if (!isAuth) {
+    return null;
+  }
+
+  if (!open) {
     return (
       <Button
         size="icon"
-        onClick={() => setIsOpen(true)}
-        className={cn(
-          "fixed bottom-6 right-6 z-[9999] h-14 w-14 rounded-full shadow-elegant",
-          "bg-primary hover:bg-primary/90 transition-all duration-300",
-          "hover:shadow-glow hover:scale-105"
-        )}
+        onClick={() => setOpen(true)}
+        className={cn("fixed bottom-6 right-6 z-[9999] h-14 w-14 rounded-full shadow-elegant bg-primary hover:bg-primary/90 transition-all duration-300 hover:shadow-glow hover:scale-105")}
       >
         <MessageCircle className="h-6 w-6" />
       </Button>
     );
   }
 
-  // Chat Window (when open)
   return (
     <div
       className={cn(
         "fixed z-[9999] transition-all duration-300",
-        isMobile ? "inset-0" : "bottom-6 right-6",
-        isMinimized && !isMobile && "bottom-6 right-6"
+        mobile ? "inset-0" : "bottom-6 right-6",
+        minimized && !mobile && "bottom-6 right-6"
       )}
     >
       <div
         className={cn(
           "bg-background rounded-lg shadow-2xl border overflow-hidden transition-all duration-300",
-          isMobile ? "w-full h-full rounded-none" : "w-[400px]",
-          isMinimized && !isMobile ? "h-[60px] w-[300px]" : !isMobile && "h-[600px]"
+          mobile ? "w-full h-full rounded-none" : "w-[400px]",
+          minimized && !mobile ? "h-[60px] w-[300px]" : !mobile && "h-[600px]"
         )}
       >
-        {/* Chat Header */}
         <div className="flex items-center justify-between p-3 border-b bg-green-500">
           <div className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-white" />
             <span className="font-semibold text-sm text-white">FinPro Assistant</span>
           </div>
           <div className="flex items-center gap-1">
-            {!isMobile && (
+            {!mobile && (
               <Button
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8 text-white hover:bg-green-600"
-                onClick={() => setIsMinimized(!isMinimized)}
+                onClick={() => setMinimized(!minimized)}
               >
-                {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                {minimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
               </Button>
             )}
             <Button
               size="icon"
               variant="ghost"
               className="h-8 w-8 text-white hover:bg-green-600"
-              onClick={() => setIsOpen(false)}
+              onClick={() => setOpen(false)}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        {/* Chat Content (only when not minimized) */}
-        {!isMinimized && (
+        {!minimized && (
           <div className="flex flex-col h-[calc(100%-52px)]">
-            {/* Status Bar */}
             <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/30">
               <p className="text-xs text-muted-foreground">
-                {chatState === 'thinking' ? t('thinking') : 
-                 chatState === 'typing' ? t('typing') : 
+                {state === 'thinking' ? t('thinking') : 
+                 state === 'typing' ? t('typing') : 
                  t('online')}
               </p>
               <div className="flex items-center gap-2">
                 {messages.length > 0 && (
                   <button
                     onClick={() => {
-                      clearChat();
-                      setShowLanguageSelection(true);
+                      clear();
+                      setShowLangSelect(true);
                     }}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
                     title="Change language"
@@ -336,7 +320,7 @@ export const ChatBot = () => {
                   <>
                     <span className="text-muted-foreground">•</span>
                     <button
-                      onClick={clearChat}
+                      onClick={clear}
                       className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {t('clearChat')}
@@ -346,7 +330,6 @@ export const ChatBot = () => {
               </div>
             </div>
 
-            {/* Messages Area */}
             <ScrollArea className="flex-1 min-h-0">
               <div className="flex flex-col">
                 {messages.length === 0 ? (
@@ -364,14 +347,13 @@ export const ChatBot = () => {
                     <ChatMessage
                       key={message.id}
                       message={message}
-                      showTimestamp={!isMobile}
-                      onSendMessage={sendMessage}
+                      showTimestamp={!mobile}
+                      onSendMessage={send}
                     />
                   ))
                 )}
                 
-                {/* Typing indicator */}
-                {chatState === 'thinking' && (
+                {state === 'thinking' && (
                   <div className="flex gap-3 py-3 px-4">
                     <div className="flex items-center justify-center h-8 w-8 rounded-full bg-muted shrink-0">
                       <Bot className="h-4 w-4" />
@@ -389,20 +371,19 @@ export const ChatBot = () => {
                   </div>
                 )}
                 
-                <div ref={messagesEndRef} />
+                <div ref={msgEndRef} />
               </div>
             </ScrollArea>
 
-            {/* Bottom Section */}
             <ChatSuggestions
-              suggestions={suggestions}
-              onSuggestionClick={handleSuggestionClick}
-              disabled={chatState === 'thinking' || chatState === 'typing'}
+              suggestions={sugs}
+              onSuggestionClick={handleSugClick}
+              disabled={state === 'thinking' || state === 'typing'}
             />
             <ChatInput
-              onSendMessage={sendMessage}
-              chatState={chatState}
-              disabled={chatState === 'error'}
+              onSendMessage={send}
+              chatState={state}
+              disabled={state === 'error'}
             />
           </div>
         )}
