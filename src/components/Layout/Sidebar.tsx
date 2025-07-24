@@ -25,16 +25,10 @@ const navigationItems = [
   { name: "Dashboard", icon: Home, path: "/dashboard" },
   { name: "Inventory", icon: Package, path: "/inventory" },
   { name: "Transactions", icon: Receipt, path: "/transactions" },
-  { name: "Track Finances", icon: Calculator, path: "/finances" },
-  { name: "Profit & Loss", icon: TrendingUp, path: "/profit-loss" },
-  { name: "Loans", icon: DollarSign, path: "/loans" },
-  { name: "Rents", icon: CreditCard, path: "/rents" },
   { name: "Bills to Pay", icon: Receipt, path: "/bills" },
+  { name: "Profit & Loss", icon: TrendingUp, path: "/profit-loss" },
+  { name: "Track Finances", icon: Calculator, path: "/finances" },
   { name: "Upload Invoice", icon: Upload, path: "/upload-invoice" },
-  { name: "Sales Data", icon: TrendingDown, path: "/sales" },
-  { name: "Reports", icon: PieChart, path: "/reports" },
-  { name: "Testing1", icon: PieChart, path: "/reports" },
-  { name: "Testing2", icon: PieChart, path: "/reports" },
 ];
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
@@ -50,13 +44,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 w-64 h-[calc(100vh-8rem)] bg-sidebar text-sidebar-foreground transform transition-transform duration-300 ease-in-out z-40 border-r border-sidebar-border",
+          "fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-sidebar text-sidebar-foreground transform transition-transform duration-300 ease-in-out z-40 border-r border-sidebar-border",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0"
         )}
-        style={{
-          top: '4rem' // header height
-        }}
       >
         {/* Mobile close button */}
         <div className="flex justify-end p-4 lg:hidden">

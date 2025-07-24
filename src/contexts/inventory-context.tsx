@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-export type UnitType = "kg" | "ltr" | "qty";
+// Removed UnitType, unitType is now a string
 
 export interface InventoryItem {
   id: string;
   itemName: string;
   purchasedPrice: number;
   units: number;
-  unitType: UnitType;
+  unitType: string;
   expectedSellingPrice: number;
   purchasedDate: string;
   expiryDate: string;

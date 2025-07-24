@@ -4,20 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useInventory, UnitType } from "@/contexts/inventory-context";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useInventory } from "@/contexts/inventory-context";
+// Removed Select import, will use Input for unit type
 import { AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-const unitTypes: UnitType[] = ["kg", "ltr", "qty"];
+// Removed unitTypes, will use free text input
 
 export default function Inventory() {
   const { inventory, addItem, searchItems } = useInventory();
   const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
   const [newItem, setNewItem] = useState({
     itemName: "",
     purchasedPrice: "",
     units: "",
-    unitType: "kg" as UnitType,
+    unitType: "kg",
     expectedSellingPrice: "",
     purchasedDate: new Date().toISOString().split("T")[0],
     expiryDate: "",
@@ -51,6 +53,7 @@ export default function Inventory() {
       supplier: "",
       notes: "",
     });
+    setOpen(false);
   };
 
   return (
@@ -69,6 +72,124 @@ export default function Inventory() {
                 onChange={e => setSearch(e.target.value)}
                 className="max-w-xs"
               />
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button className="ml-auto w-fit">Add Item</Button>
+                </DialogTrigger>
+                <DialogContent className="z-[70]">
+                  <DialogHeader>
+                    <DialogTitle>Add New Inventory Item</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleAdd} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Item Name</label>
+                        <Input
+                          placeholder="e.g. Sugar"
+                          value={newItem.itemName}
+                          onChange={e => setNewItem({ ...newItem, itemName: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Purchased Price</label>
+                        <Input
+                          type="number"
+                          placeholder="e.g. 50"
+                          value={newItem.purchasedPrice}
+                          min={0}
+                          onChange={e => setNewItem({ ...newItem, purchasedPrice: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Units</label>
+                        <Input
+                          type="number"
+                          placeholder="e.g. 10"
+                          value={newItem.units}
+                          min={0}
+                          onChange={e => setNewItem({ ...newItem, units: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Unit Type</label>
+                        <Input
+                          placeholder="e.g. kg, ltr, qty"
+                          value={newItem.unitType}
+                          onChange={e => setNewItem({ ...newItem, unitType: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Expected Selling Price</label>
+                        <Input
+                          type="number"
+                          placeholder="e.g. 60"
+                          value={newItem.expectedSellingPrice}
+                          min={0}
+                          onChange={e => setNewItem({ ...newItem, expectedSellingPrice: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Purchased Date</label>
+                        <Input
+                          type="date"
+                          value={newItem.purchasedDate}
+                          onChange={e => setNewItem({ ...newItem, purchasedDate: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Expiry Date</label>
+                        <Input
+                          type="date"
+                          value={newItem.expiryDate}
+                          onChange={e => setNewItem({ ...newItem, expiryDate: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Minimum Stock</label>
+                        <Input
+                          type="number"
+                          placeholder="e.g. 5"
+                          value={newItem.minStock}
+                          min={0}
+                          onChange={e => setNewItem({ ...newItem, minStock: Number(e.target.value) })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Category</label>
+                        <Input
+                          placeholder="e.g. Snacks"
+                          value={newItem.category}
+                          onChange={e => setNewItem({ ...newItem, category: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Supplier</label>
+                        <Input
+                          placeholder="e.g. Local Supplier"
+                          value={newItem.supplier}
+                          onChange={e => setNewItem({ ...newItem, supplier: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700">Notes</label>
+                        <Input
+                          placeholder="e.g. Store in cool place"
+                          value={newItem.notes}
+                          onChange={e => setNewItem({ ...newItem, notes: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <Button type="submit">Add Item</Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
             <div className="rounded-md border overflow-x-auto mb-8">
               <Table>
@@ -109,118 +230,6 @@ export default function Inventory() {
                 </TableBody>
               </Table>
             </div>
-            <form onSubmit={handleAdd} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Item Name</label>
-                  <Input
-                    placeholder="e.g. Sugar"
-                    value={newItem.itemName}
-                    onChange={e => setNewItem({ ...newItem, itemName: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Purchased Price</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 50"
-                    value={newItem.purchasedPrice}
-                    min={0}
-                    onChange={e => setNewItem({ ...newItem, purchasedPrice: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Units</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 10"
-                    value={newItem.units}
-                    min={0}
-                    onChange={e => setNewItem({ ...newItem, units: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Unit Type</label>
-                  <Select value={newItem.unitType} onValueChange={val => setNewItem({ ...newItem, unitType: val as UnitType })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select unit type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {unitTypes.map(type => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Expected Selling Price</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 60"
-                    value={newItem.expectedSellingPrice}
-                    min={0}
-                    onChange={e => setNewItem({ ...newItem, expectedSellingPrice: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Purchased Date</label>
-                  <Input
-                    type="date"
-                    value={newItem.purchasedDate}
-                    onChange={e => setNewItem({ ...newItem, purchasedDate: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Expiry Date</label>
-                  <Input
-                    type="date"
-                    value={newItem.expiryDate}
-                    onChange={e => setNewItem({ ...newItem, expiryDate: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Minimum Stock</label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 5"
-                    value={newItem.minStock}
-                    min={0}
-                    onChange={e => setNewItem({ ...newItem, minStock: Number(e.target.value) })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Category</label>
-                  <Input
-                    placeholder="e.g. Snacks"
-                    value={newItem.category}
-                    onChange={e => setNewItem({ ...newItem, category: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Supplier</label>
-                  <Input
-                    placeholder="e.g. Local Supplier"
-                    value={newItem.supplier}
-                    onChange={e => setNewItem({ ...newItem, supplier: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Notes</label>
-                  <Input
-                    placeholder="e.g. Store in cool place"
-                    value={newItem.notes}
-                    onChange={e => setNewItem({ ...newItem, notes: e.target.value })}
-                  />
-                </div>
-              </div>
-              <Button type="submit">Add Item</Button>
-            </form>
           </CardContent>
         </Card>
       </div>
