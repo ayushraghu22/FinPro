@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useInventory, UnitType } from "@/contexts/inventory-context";
+import { useInventory } from "@/contexts/inventory-context";
 // Removed Select import, will use Input for unit type
 import { AlertTriangle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -19,7 +19,7 @@ export default function Inventory() {
     itemName: "",
     purchasedPrice: "",
     units: "",
-    unitType: "kg" as UnitType,
+    unitType: "kg",
     expectedSellingPrice: "",
     purchasedDate: new Date().toISOString().split("T")[0],
     expiryDate: "",
