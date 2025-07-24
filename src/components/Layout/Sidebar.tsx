@@ -28,10 +28,7 @@ const navigationItems = [
   { name: "Bills to Pay", icon: Receipt, path: "/bills" },
   { name: "Profit & Loss", icon: TrendingUp, path: "/profit-loss" },
   { name: "Track Finances", icon: Calculator, path: "/finances" },
-  { name: "Loans", icon: DollarSign, path: "/loans" },
-  { name: "Rents", icon: CreditCard, path: "/rents" },
   { name: "Upload Invoice", icon: Upload, path: "/upload-invoice" },
-  { name: "Sales Data", icon: TrendingDown, path: "/sales" },
 ];
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
