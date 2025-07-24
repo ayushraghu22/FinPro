@@ -44,13 +44,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 w-64 h-[calc(100vh-8rem)] bg-sidebar text-sidebar-foreground transform transition-transform duration-300 ease-in-out z-40 border-r border-sidebar-border",
+          "fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-sidebar text-sidebar-foreground transform transition-transform duration-300 ease-in-out z-40 border-r border-sidebar-border",
           isOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0"
         )}
-        style={{
-          top: '4rem' // header height
-        }}
       >
         {/* Mobile close button */}
         <div className="flex justify-end p-4 lg:hidden">
