@@ -29,7 +29,7 @@ export const Layout = ({ children, showSidebar = true, showFooter = true }: Layo
           "flex-1 w-full transition-all duration-300 overflow-y-auto",
           showSidebar ? 'lg:ml-64' : ''
         )}>
-          <div className="w-full">
+          <div className="w-full mt-16">
             {children}
           </div>
         </main>

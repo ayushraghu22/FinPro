@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, User, Bell } from "lucide-react";
+import { Menu, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import { UserMenu } from "./UserMenu";
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export const Header = ({ onMenuToggle }: HeaderProps) => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   return (
     <header className="h-16 bg-card border-b border-border shadow-card flex items-center justify-between px-4 lg:px-6 fixed top-0 left-0 right-0 z-50">
@@ -32,9 +32,7 @@ export const Header = ({ onMenuToggle }: HeaderProps) => {
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full text-xs"></span>
             </Button>
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
+            <UserMenu />
           </>
         ) : (
           <div className="flex gap-2">

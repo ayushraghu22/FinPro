@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout/Layout";
 import { useNavigate } from "react-router-dom";
+import { UpcomingBills } from "@/components/Dashboard/UpcomingBills";
+import { useTransactions } from "@/contexts/transactions-context";
 import {
   TrendingUp,
   TrendingDown,
@@ -84,13 +86,13 @@ const Dashboard = () => {
     },
   ];
 
-  const recentTransactions = [
-    { type: "Sale", amount: "+₹2,450", description: "Customer #1234", time: "2 hours ago" },
-    { type: "Purchase", amount: "-₹1,200", description: "Supplier ABC Ltd", time: "4 hours ago" },
-    { type: "Sale", amount: "+₹3,670", description: "Customer #1235", time: "6 hours ago" },
-    { type: "Expense", amount: "-₹850", description: "Electricity Bill", time: "1 day ago" },
-    { type: "Sale", amount: "+₹1,950", description: "Customer #1236", time: "1 day ago" },
-  ];
+  const { getRecentTransactions } = useTransactions();
+  const recentTransactions = getRecentTransactions(5).map(transaction => ({
+    type: transaction.type === "income" ? "Income" : "Expense",
+    amount: `${transaction.type === "income" ? "+" : "-"}₹${transaction.amount.toLocaleString()}`,
+    description: transaction.description,
+    time: new Date(transaction.date).toLocaleDateString()
+  }));
 
   const upcomingBills = [
     { name: "Rent Payment", amount: "₹25,000", dueDate: "Tomorrow", status: "pending" },
@@ -100,7 +102,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+      <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 pt-8">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
@@ -205,38 +207,13 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
-              <Button variant="outline" className="w-full mt-4" onClick={() => navigate("/finances")}>
+              <Button variant="outline" className="w-full mt-4" onClick={() => navigate("/transactions")}>
                 View All Transactions
               </Button>
             </CardContent>
           </Card>
 
-          {/* Upcoming Bills */}
-          <Card className="shadow-card">
-            <CardHeader>
-              <CardTitle>Upcoming Bills</CardTitle>
-              <CardDescription>Bills due for payment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {upcomingBills.map((bill, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <div>
-                      <div className="font-medium text-sm">{bill.name}</div>
-                      <div className="text-xs text-muted-foreground">Due: {bill.dueDate}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium text-sm text-financial-loss">{bill.amount}</div>
-                      <div className="text-xs text-financial-warning">Pending</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Button variant="outline" className="w-full mt-4" onClick={() => navigate("/bills")}>
-                Manage All Bills
-              </Button>
-            </CardContent>
-          </Card>
+          <UpcomingBills />
         </div>
       </div>
     </Layout>
