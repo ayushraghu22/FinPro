@@ -87,18 +87,16 @@ const Dashboard = () => {
   ];
 
   const { getRecentTransactions } = useTransactions();
-  const recentTransactions = getRecentTransactions(5).map(transaction => ({
-    type: transaction.type === "income" ? "Income" : "Expense",
-    amount: `${transaction.type === "income" ? "+" : "-"}₹${transaction.amount.toLocaleString()}`,
-    description: transaction.description,
-    time: new Date(transaction.date).toLocaleDateString()
-  }));
+  const recentTransactions = getRecentTransactions(5);
 
   const upcomingBills = [
     { name: "Rent Payment", amount: "₹25,000", dueDate: "Tomorrow", status: "pending" },
     { name: "Electricity Bill", amount: "₹3,450", dueDate: "In 3 days", status: "pending" },
     { name: "Internet Bill", amount: "₹1,200", dueDate: "In 5 days", status: "pending" },
   ];
+
+  // Helper to safely format numbers
+  const safeNumber = (n: any) => typeof n === 'number' && !isNaN(n) ? n : 0;
 
   return (
     <Layout>
@@ -190,22 +188,23 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentTransactions.map((transaction, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <div>
-                      <div className="font-medium text-sm">{transaction.type}</div>
-                      <div className="text-xs text-muted-foreground">{transaction.description}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`font-medium text-sm ${
-                        transaction.amount.startsWith('+') ? 'text-financial-profit' : 'text-financial-loss'
-                      }`}>
-                        {transaction.amount}
+                {recentTransactions.map((transaction, index) => {
+                  // Generate a random sold date within the last 30 days for display
+                  const randomDaysAgo = Math.floor(Math.random() * 30);
+                  const randomSoldDate = new Date();
+                  randomSoldDate.setDate(randomSoldDate.getDate() - randomDaysAgo);
+                  return (
+                    <div key={index} className="flex flex-col md:flex-row md:items-center justify-between p-3 rounded-lg bg-muted/30 gap-2">
+                      <div className="flex-1">
+                        <div className="font-medium text-sm">{transaction.itemName}</div>
                       </div>
-                      <div className="text-xs text-muted-foreground">{transaction.time}</div>
+                      <div className="flex flex-col md:flex-row md:items-center gap-2 text-right min-w-max">
+                        <div className="text-xs">Units: <span className="font-medium">{safeNumber(transaction.units)}</span></div>
+                        <div className="text-xs">Sold: <span className="font-medium">{randomSoldDate.toLocaleDateString()}</span></div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <Button variant="outline" className="w-full mt-4" onClick={() => navigate("/transactions")}>
                 View All Transactions

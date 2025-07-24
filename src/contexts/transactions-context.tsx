@@ -2,11 +2,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 export interface Transaction {
   id: string;
+  itemName: string;
+  units: number;
+  sellingDate: string;
+  purchasingPrice: number;
+  expectedSellingPrice: number;
   description: string;
-  amount: number;
-  type: "income" | "expense";
-  category: string;
-  date: string;
 }
 
 interface TransactionsContextType {
@@ -31,43 +32,30 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const dummyTransactions: Transaction[] = [
     {
       id: "1",
-      description: "Office Rent",
-      amount: 25000,
-      type: "expense",
-      category: "Rent",
-      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+      itemName: "LED TV",
+      units: 5,
+      sellingDate: "2024-06-01",
+      purchasingPrice: 15000,
+      expectedSellingPrice: 18000,
+      description: "42-inch Smart LED TV",
     },
     {
       id: "2",
-      description: "Client Payment",
-      amount: 50000,
-      type: "income",
-      category: "Sales",
-      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+      itemName: "Refrigerator",
+      units: 2,
+      sellingDate: "2024-06-03",
+      purchasingPrice: 22000,
+      expectedSellingPrice: 26000,
+      description: "Double door, 300L capacity",
     },
     {
       id: "3",
-      description: "Internet Bill",
-      amount: 1200,
-      type: "expense",
-      category: "Utilities",
-      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
-    },
-    {
-      id: "4",
-      description: "Software Subscription",
-      amount: 3000,
-      type: "expense",
-      category: "Software",
-      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
-    },
-    {
-      id: "5",
-      description: "Consulting Income",
-      amount: 15000,
-      type: "income",
-      category: "Consulting",
-      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+      itemName: "Microwave Oven",
+      units: 3,
+      sellingDate: "2024-06-05",
+      purchasingPrice: 7000,
+      expectedSellingPrice: 9000,
+      description: "Convection, 25L",
     },
   ];
 
@@ -103,7 +91,7 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const getRecentTransactions = (limit?: number) => {
     const sorted = [...transactions].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+      new Date(b.sellingDate).getTime() - new Date(a.sellingDate).getTime()
     );
     return limit ? sorted.slice(0, limit) : sorted;
   };

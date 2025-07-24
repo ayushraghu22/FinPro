@@ -25,29 +25,45 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { useTransactions, Transaction } from "@/contexts/transactions-context";
+import { useTransactions } from "@/contexts/transactions-context";
+
+type TransactionForm = {
+  itemName: string;
+  units: string | number;
+  sellingDate: string;
+  purchasingPrice: string | number;
+  expectedSellingPrice: string | number;
+  description: string;
+};
 
 export default function Transactions() {
   const { transactions, addTransaction } = useTransactions();
   const { toast } = useToast();
 
-  const [newTransaction, setNewTransaction] = useState<Omit<Transaction, "id">>({
+  const [newTransaction, setNewTransaction] = useState<TransactionForm>({
+    itemName: "",
+    units: "",
+    sellingDate: new Date().toISOString().split('T')[0],
+    purchasingPrice: "",
+    expectedSellingPrice: "",
     description: "",
-    amount: 0,
-    type: "expense",
-    category: "",
-    date: new Date().toISOString().split('T')[0],
   });
 
   const handleAddTransaction = (e: React.FormEvent) => {
     e.preventDefault();
-    addTransaction(newTransaction);
+    addTransaction({
+      ...newTransaction,
+      units: Number(newTransaction.units),
+      purchasingPrice: Number(newTransaction.purchasingPrice),
+      expectedSellingPrice: Number(newTransaction.expectedSellingPrice),
+    } as any);
     setNewTransaction({
+      itemName: "",
+      units: "",
+      sellingDate: new Date().toISOString().split('T')[0],
+      purchasingPrice: "",
+      expectedSellingPrice: "",
       description: "",
-      amount: 0,
-      type: "expense",
-      category: "",
-      date: new Date().toISOString().split('T')[0],
     });
     toast({
       title: "Success",
@@ -68,69 +84,59 @@ export default function Transactions() {
             <form onSubmit={handleAddTransaction} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Item name</label>
                   <Input
-                    placeholder="Description"
-                    value={newTransaction.description}
-                    onChange={(e) =>
-                      setNewTransaction({ ...newTransaction, description: e.target.value })
-                    }
+                    placeholder="e.g. LED TV"
+                    value={newTransaction.itemName}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, itemName: e.target.value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Units</label>
                   <Input
                     type="number"
-                    placeholder="Amount"
-                    value={newTransaction.amount}
-                    onChange={(e) =>
-                      setNewTransaction({ ...newTransaction, amount: Number(e.target.value) })
-                    }
+                    value={newTransaction.units}
+                    min={1}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, units: e.target.value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Select
-                    value={newTransaction.type}
-                    onValueChange={(value: "income" | "expense") =>
-                      setNewTransaction({ ...newTransaction, type: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="income">Income</SelectItem>
-                      <SelectItem value="expense">Expense</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Select
-                    value={newTransaction.category}
-                    onValueChange={(value) =>
-                      setNewTransaction({ ...newTransaction, category: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Utilities">Utilities</SelectItem>
-                      <SelectItem value="Rent">Rent</SelectItem>
-                      <SelectItem value="Salary">Salary</SelectItem>
-                      <SelectItem value="Investment">Investment</SelectItem>
-                      <SelectItem value="Others">Others</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Selling Date</label>
                   <Input
                     type="date"
-                    value={newTransaction.date}
-                    onChange={(e) =>
-                      setNewTransaction({ ...newTransaction, date: e.target.value })
-                    }
+                    value={newTransaction.sellingDate}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, sellingDate: e.target.value })}
                     required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Purchasing Price</label>
+                  <Input
+                    type="number"
+                    value={newTransaction.purchasingPrice}
+                    min={0}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, purchasingPrice: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Expected Selling Price</label>
+                  <Input
+                    type="number"
+                    value={newTransaction.expectedSellingPrice}
+                    min={0}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, expectedSellingPrice: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700">Description</label>
+                  <Input
+                    placeholder="e.g. 42-inch Smart LED TV"
+                    value={newTransaction.description}
+                    onChange={(e) => setNewTransaction({ ...newTransaction, description: e.target.value })}
                   />
                 </div>
               </div>
@@ -150,25 +156,27 @@ export default function Transactions() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Item Name</TableHead>
+                    <TableHead>Units</TableHead>
+                    <TableHead>Selling Date</TableHead>
+                    <TableHead>Purchasing Price</TableHead>
+                    <TableHead>Expected Selling Price</TableHead>
                     <TableHead>Description</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {transactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>{transaction.description}</TableCell>
-                      <TableCell className={transaction.type === "income" ? "text-green-600" : "text-red-600"}>
-                        ₹{transaction.amount.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="capitalize">{transaction.type}</TableCell>
-                      <TableCell>{transaction.category}</TableCell>
-                      <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
-                    </TableRow>
-                  ))}
+                  {[...transactions]
+                    .sort((a, b) => new Date(b.sellingDate).getTime() - new Date(a.sellingDate).getTime())
+                    .map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell>{transaction.itemName}</TableCell>
+                        <TableCell>{transaction.units}</TableCell>
+                        <TableCell>{new Date(transaction.sellingDate).toLocaleDateString()}</TableCell>
+                        <TableCell>₹{transaction.purchasingPrice.toLocaleString()}</TableCell>
+                        <TableCell>₹{transaction.expectedSellingPrice.toLocaleString()}</TableCell>
+                        <TableCell>{transaction.description}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </div>

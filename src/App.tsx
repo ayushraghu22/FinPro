@@ -12,7 +12,9 @@ import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
 import { BillsProvider } from "./contexts/bills-context";
 import { TransactionsProvider } from "./contexts/transactions-context";
+import { InventoryProvider } from "./contexts/inventory-context";
 import Transactions from "./pages/Transactions";
+import Inventory from "./pages/Inventory";
 
 const queryClient = new QueryClient();
 
@@ -24,25 +26,28 @@ const App = () => (
       <BrowserRouter>
         <BillsProvider>
           <TransactionsProvider>
-            <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/objective" element={<Objective />} />
-            <Route path="/auth/signin" element={<SignIn />} />
-            <Route path="/auth/signup" element={<SignUp />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/bills" element={<Bills />} />
-            {/* TODO: Add remaining feature pages */}
-            {/* <Route path="/finances" element={<Finances />} /> */}
-            {/* <Route path="/profit-loss" element={<ProfitLoss />} /> */}
-            {/* <Route path="/loans" element={<Loans />} /> */}
-            {/* <Route path="/rents" element={<Rents />} /> */}
-            {/* <Route path="/upload-invoice" element={<UploadInvoice />} /> */}
-            {/* <Route path="/sales" element={<Sales />} /> */}
-            {/* <Route path="/reports" element={<Reports />} /> */}
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            <InventoryProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/objective" element={<Objective />} />
+                <Route path="/auth/signin" element={<SignIn />} />
+                <Route path="/auth/signup" element={<SignUp />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/bills" element={<Bills />} />
+                {/* TODO: Add remaining feature pages */}
+                {/* <Route path="/finances" element={<Finances />} /> */}
+                {/* <Route path="/profit-loss" element={<ProfitLoss />} /> */}
+                {/* <Route path="/loans" element={<Loans />} /> */}
+                {/* <Route path="/rents" element={<Rents />} /> */}
+                {/* <Route path="/upload-invoice" element={<UploadInvoice />} /> */}
+                {/* <Route path="/sales" element={<Sales />} /> */}
+                {/* <Route path="/reports" element={<Reports />} /> */}
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </InventoryProvider>
           </TransactionsProvider>
         </BillsProvider>
       </BrowserRouter>
