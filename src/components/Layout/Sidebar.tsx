@@ -25,11 +25,11 @@ const navigationItems = [
   { name: "Dashboard", icon: Home, path: "/dashboard" },
   { name: "Inventory", icon: Package, path: "/inventory" },
   { name: "Transactions", icon: Receipt, path: "/transactions" },
+  { name: "Bills to Pay", icon: Receipt, path: "/bills" },
   { name: "Track Finances", icon: Calculator, path: "/finances" },
   { name: "Profit & Loss", icon: TrendingUp, path: "/profit-loss" },
   { name: "Loans", icon: DollarSign, path: "/loans" },
   { name: "Rents", icon: CreditCard, path: "/rents" },
-  { name: "Bills to Pay", icon: Receipt, path: "/bills" },
   { name: "Upload Invoice", icon: Upload, path: "/upload-invoice" },
   { name: "Sales Data", icon: TrendingDown, path: "/sales" },
 ];
