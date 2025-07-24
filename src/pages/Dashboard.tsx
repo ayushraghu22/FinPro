@@ -67,7 +67,7 @@ const Dashboard = () => {
       title: "Record Sale",
       description: "Add new sales transaction",
       icon: Receipt,
-      action: () => navigate("/sales"),
+      action: () => navigate("/record-sales"),
       color: "bg-financial-profit",
     },
     {
