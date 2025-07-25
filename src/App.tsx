@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/auth/SignIn";
@@ -16,16 +17,18 @@ import { InventoryProvider } from "./contexts/inventory-context";
 import Transactions from "./pages/Transactions";
 import Inventory from "./pages/Inventory";
 import ProfitLoss from "./pages/ProfitLoss";
+import SalesForeCast from './pages/SalesForeCast';
 import UploadInvoice from "./pages/UploadInvoice";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <LanguageProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
         <BillsProvider>
           <TransactionsProvider>
             <InventoryProvider>
@@ -41,7 +44,6 @@ const App = () => (
                 <Route path="/upload-invoice" element={<UploadInvoice />} />
                 {/* TODO: Add remaining feature pages */}
                 {/* <Route path="/finances" element={<Finances />} /> */}
-                {/* <Route path="/profit-loss" element={<ProfitLoss />} /> */}
                 {/* <Route path="/loans" element={<Loans />} /> */}
                 {/* <Route path="/rents" element={<Rents />} /> */}
                 {/* <Route path="/upload-invoice" element={<UploadInvoice />} /> */}
@@ -49,6 +51,7 @@ const App = () => (
                 {/* <Route path="/reports" element={<Reports />} /> */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="/transactions" element={<Transactions />} />
+                <Route path="/sales-forecast" element={<SalesForeCast />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </InventoryProvider>
@@ -56,6 +59,7 @@ const App = () => (
         </BillsProvider>
       </BrowserRouter>
     </TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

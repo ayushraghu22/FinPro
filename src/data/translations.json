@@ -1,0 +1,26 @@
+{
+  "en": {
+    "welcomeMessage": "Hey! What do you need?",
+    "inputPlaceholder": "Ask about your business finances...",
+    "listening": "Listening...",
+    "sendButton": "Send",
+    "clearChat": "Clear",
+    "online": "Online",
+    "thinking": "Thinking...",
+    "typing": "Typing...",
+    "noMessages": "No messages yet",
+    "noMessagesDesc": "Start a conversation with your FinPro assistant to get help with your business.",
+    "pressEnter": "Press Enter to send",
+    "micForVoice": ", click mic for voice",
+    "profitLoss": "I can help you analyze your profit and loss data. Based on your recent transactions, your business is showing a positive trend. Would you like me to generate a detailed P&L report or explain any specific metrics?",
+    "expenses": "Let me help you with expense tracking. Your major expense categories include inventory purchases, rent, and utilities. I can help you categorize expenses, set budgets, or analyze spending patterns. What specific aspect would you like to explore?",
+    "inventory": "I can assist with inventory management. Your current stock levels show some items running low. Would you like me to show you which products need restocking or help you track inventory turnover rates?",
+    "sales": "Great question about sales! Your revenue has been steady with seasonal variations. I can help you analyze sales trends, identify top-performing products, or forecast future sales. What would be most helpful?",
+    "loans": "I can help you understand loan options and credit management. Based on your financial data, you may qualify for business loans with favorable terms. Would you like me to explain eligibility criteria or help calculate EMI options?",
+    "tax": "Tax compliance is important for your business. I can help you understand GST calculations, track tax obligations, and prepare necessary documentation. Which tax-related topic would you like assistance with?",
+    "reports": "I can generate various business reports for you. Popular options include monthly financial summaries, inventory reports, sales analytics, and trend analysis. Which type of report would be most valuable for your business decisions?",
+    "greeting": "Hello! I'm your FinPro assistant, here to help you manage your business finances effectively. I can assist with expense tracking, inventory management, sales analysis, and business insights. How can I help you today?",
+    "help": "I can show you:\n\n• Expenses\n• Profit analysis\n• Inventory status\n• Sales data\n\nJust ask for what you need.",
+    "default": "Not sure what you mean. Try asking for expenses, profit, inventory, or sales."
+  }
+}

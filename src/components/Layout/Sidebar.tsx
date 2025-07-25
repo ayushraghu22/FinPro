@@ -29,6 +29,11 @@ const navigationItems = [
   { name: "Profit & Loss", icon: TrendingUp, path: "/profit-loss" },
   { name: "Track Finances", icon: Calculator, path: "/finances" },
   { name: "Upload Invoice", icon: Upload, path: "/upload-invoice" },
+  { name: "Sales Data", icon: TrendingDown, path: "/sales" },
+  { name: "Reports", icon: PieChart, path: "/reports" },
+  { name: "Sales ForeCast", icon: PieChart, path: "/sales-forecast" },
+  { name: "Testing1", icon: PieChart, path: "/reports" },
+  { name: "Testing2", icon: PieChart, path: "/reports" },
 ];
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
