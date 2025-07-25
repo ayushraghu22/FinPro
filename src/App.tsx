@@ -10,6 +10,7 @@ import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import Objective from "./pages/Objective";
 import Dashboard from "./pages/Dashboard";
+import SalesForeCast from './pages/SalesForeCast';
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           {/* <Route path="/sales" element={<Sales />} /> */}
           {/* <Route path="/reports" element={<Reports />} /> */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/sales-forecast" element={<SalesForeCast />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

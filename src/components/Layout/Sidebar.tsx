@@ -30,7 +30,7 @@ const navigationItems = [
   { name: "Upload Invoice", icon: Upload, path: "/upload-invoice" },
   { name: "Sales Data", icon: TrendingDown, path: "/sales" },
   { name: "Reports", icon: PieChart, path: "/reports" },
-  { name: "Testing1", icon: PieChart, path: "/reports" },
+  { name: "Sales ForeCast", icon: PieChart, path: "/sales-forecast" },
   { name: "Testing2", icon: PieChart, path: "/reports" },
 ];
 
