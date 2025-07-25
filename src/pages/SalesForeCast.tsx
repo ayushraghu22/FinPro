@@ -4,7 +4,7 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Typography
 } from "@mui/material";
 
-const BITBUCKET_CSV_URL = "https://storage.googleapis.com/run-sources-hack-team-finpro-us-central1/sales_forecast/sales_forecast_combined_predictions_cleaned.csv";
+const BITBUCKET_CSV_URL = "https://storage.googleapis.com/run-sources-hack-team-finpro-us-central1/sales_forecast/sales_forecast_combined_predictions_cleaned1.csv";
 
 const SalesForeCast: React.FC = () => {
   const [data, setData] = useState<string[][]>([]);

@@ -18,6 +18,7 @@ import Transactions from "./pages/Transactions";
 import Inventory from "./pages/Inventory";
 import ProfitLoss from "./pages/ProfitLoss";
 import SalesForeCast from './pages/SalesForeCast';
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -49,7 +50,7 @@ const App = () => (
                 {/* <Route path="/reports" element={<Reports />} /> */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="/transactions" element={<Transactions />} />
-                <Route path="/sales-forecast" element={<SalesForeCast />} />
+                <Route path="/sales-forecast" element={<ProtectedRoute><SalesForeCast /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </InventoryProvider>
