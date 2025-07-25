@@ -24,6 +24,7 @@ const SignIn = () => {
     
     // Simulate login process
     setTimeout(() => {
+      localStorage.setItem('isLoggedIn', 'true');
       toast({
         title: "Welcome back!",
         description: "You have been successfully signed in.",
