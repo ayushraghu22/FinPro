@@ -56,7 +56,7 @@
     --gradient-primary: linear-gradient(135deg, hsl(212, 95%, 45%), hsl(212, 85%, 55%));
     --gradient-success: linear-gradient(135deg, hsl(142, 69%, 48%), hsl(142, 76%, 36%));
     --gradient-hero: linear-gradient(135deg, hsl(212, 95%, 45%) 0%, hsl(142, 69%, 48%) 100%);
-    
+
     /* Shadows */
     --shadow-elegant: 0 10px 30px -10px hsl(212 95% 45% / 0.2);
     --shadow-card: 0 4px 20px -8px hsl(215 25% 26% / 0.1);
@@ -132,27 +132,27 @@
   .gradient-primary {
     background: var(--gradient-primary);
   }
-  
+
   .gradient-success {
     background: var(--gradient-success);
   }
-  
+
   .gradient-hero {
     background: var(--gradient-hero);
   }
-  
+
   .shadow-elegant {
     box-shadow: var(--shadow-elegant);
   }
-  
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
-  
+
   .shadow-glow {
     box-shadow: var(--shadow-glow);
   }
-  
+
   .transition-smooth {
     transition: var(--transition-smooth);
   }
@@ -160,16 +160,114 @@
   .profit-color {
     color: hsl(var(--profit));
   }
-  
+
   .loss-color {
     color: hsl(var(--loss));
   }
-  
+
   .warning-color {
     color: hsl(var(--warning));
   }
-  
+
   .info-color {
     color: hsl(var(--info));
   }
+
+  /* === Google Translate Widget Styles (Corrected Visibility) === */
+
+  /* --- Basic Reset --- */
+  /*
+    CORRECTION: We now target only the .skiptranslate banner that is a
+    direct child of the body, leaving our widget in the header alone.
+  */
+  body > .skiptranslate {
+    display: none !important;
+  }
+
+  /* These are still fine to hide globally */
+  #goog-gt-tt,
+  .goog-te-gadget-icon {
+    display: none !important;
+  }
+  /* --- End Reset --- */
+
+
+  /* --- 1. The Wrapper --- */
+  .google-translate-container {
+    display: inline-flex;
+    align-items: center;
+    height: 2.25rem; /* 36px, matches your 'sm' buttons */
+    vertical-align: middle;
+  }
+
+  /* --- 2. The Widget Itself --- */
+  #google_translate_element {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .goog-te-gadget-simple {
+    background-color: transparent !important;
+    border: 1px solid hsl(var(--border)) !important; /* Match your outline buttons */
+    border-radius: var(--radius) !important;
+    padding: 0 0.5rem !important; /* 8px horizontal padding */
+    margin: 0 !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .goog-te-gadget-simple:hover {
+      background-color: hsl(var(--accent) / 0.1) !important;
+  }
+
+  /* --- 3. The Text Displayed in the Header --- */
+  .goog-te-gadget-simple .goog-te-menu-value {
+    color: hsl(var(--foreground)) !important;
+    text-decoration: none !important;
+    padding: 0 4px !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+    /* --- 4. The Dropdown Panel (iframe) --- */
+    .goog-te-menu-frame {
+      max-width: 220px !important;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+      border-radius: 0.5rem !important;
+      border: 1px solid hsl(var(--border)) !important;
+      background-color: hsl(var(--popover)) !important;
+
+      /*
+        FIX: Override Google's calculated position.
+        Your header is 4rem (64px) tall. We force the dropdown to
+        always appear just below it, with a little extra space.
+      */
+      top: 4.25rem !important;
+    }
+
+  /* --- 5. The Items Inside the Dropdown --- */
+  .goog-te-menu2-item div, .goog-te-menu2-item:link div, .goog-te-menu2-item:visited div, .goog-te-menu2-item:active div {
+    background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 14px !important;
+    border: none !important; /* Override any default borders */
+  }
+
+  /* --- 6. The Hover/Selected State --- */
+  .goog-te-menu2-item-selected div,
+  .goog-te-menu2-item:hover div {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
 }
+
