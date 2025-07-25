@@ -16,6 +16,7 @@ import { InventoryProvider } from "./contexts/inventory-context";
 import Transactions from "./pages/Transactions";
 import Inventory from "./pages/Inventory";
 import ProfitLoss from "./pages/ProfitLoss";
+import UploadInvoice from "./pages/UploadInvoice";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/profit-loss" element={<ProfitLoss />} />
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/bills" element={<Bills />} />
+                <Route path="/upload-invoice" element={<UploadInvoice />} />
                 {/* TODO: Add remaining feature pages */}
                 {/* <Route path="/finances" element={<Finances />} /> */}
                 {/* <Route path="/profit-loss" element={<ProfitLoss />} /> */}
